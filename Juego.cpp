@@ -26,6 +26,11 @@ Pantalla::Pantalla(unsigned int w, unsigned int h, const char *title)
         sprite.setScale(scaleX, scaleY);
         sprite.setPosition((float)w / 2.f, (float)h / 2.f);
         textureLoaded = true;
+        // Intentar cargar animación de caminar (dos imágenes)
+        if (walkAnim.load("Imagenes/SemibotPaso1.png", "Imagenes/SemibotPaso2.png")) {
+            walkAnim.configure(targetW, targetH);
+            walkAnim.setPosition((float)w / 2.f, (float)h / 2.f);
+        }
     } else {
         // si falla la carga, al menos dejamos textureLoaded = false y usaremos un fallback en run()
         // Puedes comprobar en tiempo de ejecución que la ruta es correcta y que el archivo existe.
@@ -48,6 +53,8 @@ void Pantalla::run()
     // Movimiento dependiente del tiempo
     sf::Clock clock;
     const float speed = 200.f; // pixeles por segundo
+    const float targetW = 128.f;
+    const float targetH = 172.f;
 
     while (window.isOpen())
     {
@@ -63,36 +70,58 @@ void Pantalla::run()
         // Input: A/D para mover
         bool moving = false;
         if (textureLoaded) {
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-                sprite.move(-speed * dt, 0.f);
-                moving = true;
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-                sprite.move(speed * dt, 0.f);
-                moving = true;
-            }
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+                    if (walkAnim.isLoaded()) walkAnim.move(-speed * dt, 0.f);
+                    else sprite.move(-speed * dt, 0.f);
+                    moving = true;
+                }
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+                    if (walkAnim.isLoaded()) walkAnim.move(speed * dt, 0.f);
+                    else sprite.move(speed * dt, 0.f);
+                    moving = true;
+                }
 
             // Limitar sprite dentro de la ventana (usar tamaño mostrado = frameSize * escala)
-            sf::Vector2f pos = sprite.getPosition();
-            sf::Vector2f scale = sprite.getScale();
-            float halfw = (float)frameSize.x * scale.x / 2.f;
-            if (pos.x < halfw) sprite.setPosition(halfw, pos.y);
-            if (pos.x > window.getSize().x - halfw) sprite.setPosition(window.getSize().x - halfw, pos.y);
-
-            // Animación cuando no se mueve: alternar entre los frames verticales del sprite sheet
-            if (!moving) {
-                frameTimer += dt;
-                if (frameTimer >= frameDuration) {
-                    frameTimer = 0.f;
-                    currentFrame = (currentFrame + 1) % frameCount;
-                    // frame vertical: desplazamiento en Y
-                    sprite.setTextureRect(sf::IntRect(0, currentFrame * frameSize.y, frameSize.x, frameSize.y));
-                }
+            // calcular límites dependiendo si usamos walkAnim o sprite
+            if (walkAnim.isLoaded()) {
+                // usar tamaño del frame y escala de walkAnim
+                float halfw = (float)frameSize.x * walkAnim.getScale().x / 2.f;
+                sf::Vector2f pos = walkAnim.getPosition();
+                if (pos.x < halfw) walkAnim.setPosition(halfw, pos.y);
+                if (pos.x > window.getSize().x - halfw) walkAnim.setPosition(window.getSize().x - halfw, pos.y);
             } else {
-                // Al moverse, fijar al primer frame (frame 0)
-                currentFrame = 0;
-                sprite.setTextureRect(sf::IntRect(0, 0, frameSize.x, frameSize.y));
-                frameTimer = 0.f;
+                sf::Vector2f pos = sprite.getPosition();
+                sf::Vector2f scale = sprite.getScale();
+                float halfw = (float)frameSize.x * scale.x / 2.f;
+                if (pos.x < halfw) sprite.setPosition(halfw, pos.y);
+                if (pos.x > window.getSize().x - halfw) sprite.setPosition(window.getSize().x - halfw, pos.y);
+            }
+
+            // Cuando está parado: usar la imagen completa de SemibotParado.png (sin alternar frames)
+            if (!moving) {
+                unsigned int texW = texture.getSize().x;
+                unsigned int texH = texture.getSize().y;
+                // si existía walkAnim en movimiento, copiar su posición al sprite
+                if (walkAnim.isLoaded()) {
+                    sf::Vector2f wp = walkAnim.getPosition();
+                    sprite.setPosition(wp.x, wp.y);
+                }
+                // mostrar la textura completa
+                sprite.setTextureRect(sf::IntRect(0, 0, texW, texH));
+                sprite.setOrigin((float)texW / 2.f, (float)texH / 2.f);
+                sprite.setScale(targetW / (float)texW, targetH / (float)texH);
+            } else {
+                // Al moverse, usar la animación de caminar si está disponible
+                if (walkAnim.isLoaded()) {
+                    walkAnim.update(dt);
+                } else {
+                    // mantener el primer frame (frame 0) del sprite sheet
+                    currentFrame = 0;
+                    sprite.setTextureRect(sf::IntRect(0, 0, frameSize.x, frameSize.y));
+                    sprite.setOrigin((float)frameSize.x / 2.f, (float)frameSize.y / 2.f);
+                    sprite.setScale(targetW / (float)frameSize.x, targetH / (float)frameSize.y);
+                    frameTimer = 0.f;
+                }
             }
         } else {
             // Mover el rect como fallback
@@ -111,7 +140,11 @@ void Pantalla::run()
 
         window.clear();
         if (textureLoaded) {
-            window.draw(sprite);
+            if (moving && walkAnim.isLoaded()) {
+                walkAnim.draw(window);
+            } else {
+                window.draw(sprite);
+            }
         } else {
             window.draw(rect);
         }

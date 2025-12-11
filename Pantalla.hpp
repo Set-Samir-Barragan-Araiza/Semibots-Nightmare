@@ -1,5 +1,6 @@
 #pragma once
 #include<SFML/Graphics.hpp>
+#include "WalkAnimation.hpp"
 
 class Pantalla 
 {
@@ -11,6 +12,7 @@ class Pantalla
     sf::Texture texture;
     sf::Sprite sprite;
     bool textureLoaded = false;
+    WalkAnimation walkAnim;
     // Animation (sprite sheet) support: when using a sprite sheet
     // SemibotParado.png contiene 2 frames horizontales; estos campos permiten alternarlos
     int frameCount = 1;          // cuántos frames hay en la fila (por defecto 1)
