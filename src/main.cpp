@@ -2,6 +2,7 @@
 #include "../include/Pantalla.hpp"
 #include "../include/MenuInicio.hpp"
 #include <SFML/Graphics.hpp>
+#include <filesystem>
 
 int main()
 {
