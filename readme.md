@@ -143,21 +143,6 @@ Contribuciones
 Por favor incluye capturas si el cambio afecta a la UI/animaciones.
 
 --
-
-Licencia
-
-Incluye la licencia que desees aquí (MIT por defecto). Si quieres que añada un archivo `LICENSE`, dime cuál prefieres.
-
---
-
-Contacto y Créditos
-
-- Autor: Set-Samir-Barragan-Arazia
-- Recursos: las imágenes y sonidos están en la carpeta `assets/`.
-
---
-
-¡Gracias por trabajar en este proyecto! Si quieres, puedo añadir ejemplos de screenshots, badges o un GIF corto mostrando gameplay.
-
+**Muchas gracias por visualizar este proyecto!!**
 
 
