@@ -111,10 +111,11 @@ Incluye la licencia que desees aquí (MIT por defecto). Si quieres que añada un
 
 Contacto y Créditos
 
-- Autor: Equipo de desarrollo (local)
+- Autor: Set-Samir-Barragan-Arazia
 - Recursos: las imágenes y sonidos están en la carpeta `assets/`.
 
 --
 
 ¡Gracias por trabajar en este proyecto! Si quieres, puedo añadir ejemplos de screenshots, badges o un GIF corto mostrando gameplay.
+
 
