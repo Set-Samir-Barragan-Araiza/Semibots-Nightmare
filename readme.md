@@ -46,19 +46,6 @@ Tome de referencia el juego de R.E.P.O. para el diseño en general y lo mezcle c
 **Agradecimientos:**
 - TechspiredMinds
 - Semiwork
---
-**Información Complementaria**
---
-**Características principales**
-
-- Movimiento lateral con teclas `A` / `D`.
-- Agachado con `Left Ctrl`.
-- Animación de caminar (dos frames) y sprite de idle.
-- Escalado uniforme por altura objetivo para mantener proporciones.
-- Superposición en pantalla con ayuda gráfica (`GamesButtons.png`) que indica los controles.
-- Integración de efectos de sonido para pasos (si `assets/sound/footsteps.*` está presente).
-
---
 
 **Requisitos**
 
@@ -99,17 +86,7 @@ Notas:
 - Si faltan DLLs de SFML en Windows, ejecuta `sh scripts/copy_sfml_dlls.sh "" bin` desde MSYS/MinGW o copia manualmente las DLLs al directorio `bin/`.
 - El Makefile está preparado para compilar los objetos en `bin/objs` y enlazar `bin/app.exe`.
 
---
-
-Controles del juego
-
-- Mover izquierda/derecha: `A` / `D`.
-- Agacharse: `Left Ctrl`.
-- En el menú de inicio: `Enter` para comenzar.
-
---
-
-Assets importantes
+-Assets importantes
 
 - `assets/images/FondoChimenea.png` — fondo principal (usado como 'suelo').
 - `assets/images/SemibotParadoDerecha.png`, `SemibotParadoIzquierda.png` — frames de idle.
@@ -132,17 +109,7 @@ Depuración rápida
 - Para ver mensajes de depuración temporales (si aún existen), ejecuta el binario desde una consola para ver la salida estándar.
 - Si la app no inicia, verifica la presencia de las DLLs de SFML en `bin/` o instala SFML en tu sistema.
 
---
-
-Contribuciones
-
-1. Haz un fork del repositorio.
-2. Crea una rama feature/bugfix.
-3. Haz tus cambios y abre un pull request con descripción clara.
-
-Por favor incluye capturas si el cambio afecta a la UI/animaciones.
-
---
 **Muchas gracias por visualizar este proyecto!!**
+
 
 
