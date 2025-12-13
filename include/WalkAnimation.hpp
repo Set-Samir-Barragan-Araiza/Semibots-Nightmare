@@ -20,7 +20,10 @@ public:
         unsigned int w = tex0.getSize().x;
         unsigned int h = tex0.getSize().y;
         sprite.setOrigin((float)w / 2.f, (float)h / 2.f);
-        sprite.setScale(targetW / (float)w, targetH / (float)h);
+        // usar escala uniforme basada en la altura objetivo para evitar compresión
+        cfgTargetW = targetW; cfgTargetH = targetH;
+        float s = (h > 0) ? (targetH / (float)h) : 1.f;
+        sprite.setScale(s, s);
     }
 
     // Configure origin at bottom-center so sprite position corresponds to feet on floor
@@ -29,7 +32,9 @@ public:
         unsigned int w = tex0.getSize().x;
         unsigned int h = tex0.getSize().y;
         sprite.setOrigin((float)w / 2.f, (float)h);
-        sprite.setScale(targetW / (float)w, targetH / (float)h);
+        cfgTargetW = targetW; cfgTargetH = targetH;
+        float s = (h > 0) ? (targetH / (float)h) : 1.f;
+        sprite.setScale(s, s);
     }
 
     void update(float dt) {
@@ -38,7 +43,17 @@ public:
         if (timer >= frameDuration) {
             timer = 0.f;
             current = (current + 1) % 2;
-            sprite.setTexture(current == 0 ? tex0 : tex1);
+            // al cambiar la textura, recalcular origen y escala para mantener alineación bottom-center
+            sf::Texture &t = (current == 0) ? tex0 : tex1;
+            sprite.setTexture(t);
+            if (cfgTargetH > 0.f) {
+                unsigned int h = t.getSize().y;
+                unsigned int w = t.getSize().x;
+                sprite.setOrigin((float)w / 2.f, (float)h);
+                float s = (h > 0) ? (cfgTargetH / (float)h) : 1.f;
+                sprite.setScale(s, s);
+                // al cambiar el frame, ya se recalculó origen/escala para mantener alineación
+            }
         }
     }
 
@@ -52,11 +67,18 @@ public:
     sf::Vector2f getScale() const { return sprite.getScale(); }
     unsigned int texWidth() const { return tex0.getSize().x; }
     unsigned int texHeight() const { return tex0.getSize().y; }
+    sf::FloatRect getGlobalBounds() const { if (!loaded) return sf::FloatRect(); return sprite.getGlobalBounds(); }
+
+    // Obtener la textura actualmente usada por la animación
+    const sf::Texture &getCurrentTexture() const { return (current == 0) ? tex0 : tex1; }
+    int getCurrentFrameIndex() const { return current; }
 
 private:
     sf::Texture tex0;
     sf::Texture tex1;
     sf::Sprite sprite;
+    float cfgTargetW = 0.f;
+    float cfgTargetH = 0.f;
     bool loaded = false;
     int current = 0;
     float frameDuration = 0.15f;

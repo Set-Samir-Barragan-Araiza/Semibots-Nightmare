@@ -1,6 +1,9 @@
 #pragma once
 #include<SFML/Graphics.hpp>
+#include<SFML/Audio.hpp>
 #include "WalkAnimation.hpp"
+#include "Direccion.hpp"
+#include "Semibot.hpp"
 
 class Pantalla 
 {
@@ -13,16 +16,25 @@ class Pantalla
     sf::Texture bgTexture;
     sf::Sprite bgSprite;
     bool bgLoaded = false;
-    sf::Texture texture;
-    sf::Sprite sprite;
-    bool textureLoaded = false;
-    WalkAnimation walkAnim;
-    // Animation (sprite sheet) support: when using a sprite sheet
-    // SemibotParado.png contiene 2 frames horizontales; estos campos permiten alternarlos
-    int frameCount = 1;          // cuántos frames hay en la fila (por defecto 1)
-    int currentFrame = 0;        // frame actual
-    sf::Vector2i frameSize;      // tamaño de cada frame (px)
-    float frameDuration = 0.5f;  // segundos entre frames cuando está parado
-    float frameTimer = 0.f;      // acumulador de tiempo
+    // offset en píxeles desde la parte inferior del fondo que se considera "suelo"
+    float floorOffset = 0.f;
+    public:
+    void setFloorOffset(float o) { floorOffset = o; }
+    Semibot semibot;
+    bool semibotLoaded = false;
+    // audio
+    sf::SoundBuffer footBuffer;
+    sf::Sound footSound;
+    bool footLoaded = false;
+    // Ayuda visual de controles
+    sf::Texture helpTexture;
+    sf::Sprite helpSprite;
+    bool helpLoaded = false;
+    sf::Font helpFont;
+    sf::Text helpText;
+    bool showHelp = true;
+    float helpDuration = 4.f; // segundos por defecto
+    float helpTimer = 0.f;
+    // (La animación y texturas ahora se manejan desde `Semibot`)
 
 };
